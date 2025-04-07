@@ -425,57 +425,74 @@ function addQuarterlyReimbursementRow () {
 
         return result.trim();
     }
-//     async function generatePDF() {
+
+// async function generatePDF() {
 //     const { jsPDF } = window.jspdf;
-//     const formElement = document.querySelector('.container');
+//     const formElement = document.querySelector('.container'); // Adjust the selector to your form's container
 
 //     try {
-//         const canvas = await html2canvas(formElement);
-//         const imgData = canvas.toDataURL('image/png');
+//       const canvas = await html2canvas(formElement);
+//       const imgData = canvas.toDataURL('image/png');
 
-//         const pdf = new jsPDF('p', 'mm', 'a4');
-//         const pdfWidth = pdf.internal.pageSize.getWidth();
-//         const imgProps = pdf.getImageProperties(imgData);
-//         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+//       const pdf = new jsPDF('p', 'mm', 'a4');
+//       const imgProps = pdf.getImageProperties(imgData);
+//       const pdfWidth = pdf.internal.pageSize.getWidth();
+//       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-//         // Add image to PDF
-//         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+//       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+//       pdf.save('Reimbursement_Form.pdf');
 
-//         // Save the file (name it using current date or employee name)
-//         const fileName = `B2R_Reimbursement_${new Date().toISOString().slice(0, 10)}.pdf`;
-//         pdf.save(fileName);
-
-//         // Optional: Redirect or show success message
-//         alert("PDF generated and downloaded successfully!");
-
-//         // Optional: If you want to redirect after generation
-//         // window.location.href = "success.html";
+//       return pdf;
 //     } catch (error) {
-//         console.error("Error generating PDF:", error);
-//         alert("An error occurred while generating the PDF.");
+//       console.error('Error generating PDF:', error);
 //     }
-// }
+//   }
 async function generatePDF() {
     const { jsPDF } = window.jspdf;
-    const formElement = document.querySelector('.container'); // Adjust the selector to your form's container
+    const doc = new jsPDF('p', 'pt', 'a4');
 
-    try {
-      const canvas = await html2canvas(formElement);
-      const imgData = canvas.toDataURL('image/png');
+    const element = document.querySelector('.container');
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    await html2canvas(element, {
+        scale: 2,
+        scrollY: -window.scrollY
+    }).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = doc.getImageProperties(imgData);
+        const pdfWidth = doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('Reimbursement_Form.pdf');
+        doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
-      return pdf;
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-    }
-  }
+        // Save the file locally
+        doc.save('B2R_Reimbursement_Form.pdf');
+
+        // Optionally send to email
+        sendEmailWithPDF(doc);
+    });
+}
+function sendEmailWithPDF(pdfDoc) {
+    const pdfBlob = pdfDoc.output('blob');
+
+    const formData = new FormData();
+    formData.append("file", pdfBlob, "B2R_Reimbursement_Form.pdf");
+
+    const managerEmail = document.querySelector("input[placeholder='Manager_Email']")?.value || "dev.test@b2r.in";
+
+    formData.append("manager_email", managerEmail);
+
+    fetch("https://script.google.com/macros/s/AKfycby_7hPtHktFyzAg2TTXZTnJsIHTbGpvI5MWCe56m8iHXrPB_w0gNb6rl0IYCseRvO4OZA/exec", {
+        method: "POST",
+        body: formData
+    }).then(res => res.text())
+      .then(response => {
+        alert("Form submitted and emailed successfully!");
+      })
+      .catch(error => {
+        console.error("Error sending email:", error);
+        alert("Failed to send email.");
+      });
+}
 
 
 </script>
