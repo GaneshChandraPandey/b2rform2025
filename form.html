@@ -481,37 +481,33 @@ function addQuarterlyReimbursementRow () {
 // reader.readAsDataURL(pdfBlob);
 
 async function generateAndSendPDF() {
-      const email = document.getElementById('email').value;
-      if (!email.endsWith('@b2r.in')) {
-        alert('Only b2r.in emails are allowed!');
-        return;
-      }
+  const email = document.getElementById('user_email').value;
 
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text("Hello B2R!", 10, 10);
-      const blob = doc.output('blob');
+  if (!email.endsWith("@b2r.in")) {
+    alert("Only B2R email addresses are allowed.");
+    return;
+  }
 
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        const base64 = reader.result.split(',')[1]; // Get base64 string
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.text("Reimbursement Form Data", 10, 10);
 
-        fetch('PASTE_YOUR_WEBAPP_URL_HERE', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            email: email,
-            pdfBase64: base64
-          })
-        })
-        .then(res => res.text())
-        .then(msg => alert(msg))
-        .catch(err => console.error("Error sending PDF:", err));
-      };
-      reader.readAsDataURL(blob);
-    }
+  const pdfBase64 = btoa(doc.output());
+
+  await fetch("https://script.google.com/macros/s/AKfycby_7hPtHktFyzAg2TTXZTnJsIHTbGpvI5MWCe56m8iHXrPB_w0gNb6rl0IYCseRvO4OZA/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: email,
+      pdfBase64: pdfBase64,
+    }),
+  });
+
+  alert("Form submitted. PDF sent to your and manager's email.");
+}
+
 </script>
 </body>
 </html>
