@@ -455,6 +455,30 @@ function addQuarterlyReimbursementRow () {
         alert("An error occurred while generating the PDF.");
     }
 }
+const doc = new jsPDF();
+doc.text("Hello, B2R!", 10, 10);
+const pdfBlob = doc.output('blob');
+
+const reader = new FileReader();
+reader.onloadend = function () {
+  const base64pdf = reader.result.split(',')[1]; // remove base64 prefix
+
+  fetch('https://script.google.com/macros/s/AKfycby_7hPtHktFyzAg2TTXZTnJsIHTbGpvI5MWCe56m8iHXrPB_w0gNb6rl0IYCseRvO4OZA/exec', {
+    method: 'POST',
+    body: JSON.stringify({
+      email: 'gpandey059@gmail.com',
+      pdfBase64: base64pdf,
+    }),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.text())
+  .then(alert)
+  .catch(err => console.error("Error:", err));
+};
+
+reader.readAsDataURL(pdfBlob);
 
 
 </script>
