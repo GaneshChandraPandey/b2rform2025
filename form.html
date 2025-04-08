@@ -138,8 +138,10 @@
             <th>IFSC:</th>
             <td colspan="3"><input type="text" required></td>
         </tr>
-        <th>Manager_Email:</th>
-        <td><input type="text" required></td>
+        <th>managerEmail:<input type="email" id="managerEmail" placeholder="Manager's Email" required /></th>
+        
+        <th>employeemail:  <input type="email" id="employeeEmail" placeholder="Your Email" required /></th>
+      
     </table>
 
     <!-- 🚗 Travel Details -->
@@ -249,7 +251,7 @@
    <!-- send mail -->
     <div style="display: flex; justify-content: flex-end;">
      
-    <button  class="btn" onclick="generatePDF()">Submit</button>
+    <button  class="btn" onclick="generatePDFAndSend()">Submit</button>
 </div>
 </div>
 <script>
@@ -425,76 +427,55 @@ function addQuarterlyReimbursementRow () {
 
         return result.trim();
     }
-
-// async function generatePDF() {
-//     const { jsPDF } = window.jspdf;
-//     const formElement = document.querySelector('.container'); // Adjust the selector to your form's container
-
-//     try {
-//       const canvas = await html2canvas(formElement);
-//       const imgData = canvas.toDataURL('image/png');
-
-//       const pdf = new jsPDF('p', 'mm', 'a4');
-//       const imgProps = pdf.getImageProperties(imgData);
-//       const pdfWidth = pdf.internal.pageSize.getWidth();
-//       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-//       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-//       pdf.save('Reimbursement_Form.pdf');
-
-//       return pdf;
-//     } catch (error) {
-//       console.error('Error generating PDF:', error);
-//     }
-//   }
-async function generatePDF() {
+    async function generatePDFAndSend() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
+    const element = document.body;
 
-    const element = document.querySelector('.container');
-
-    await html2canvas(element, {
-        scale: 2,
-        scrollY: -window.scrollY
-    }).then(canvas => {
+    try {
+        const canvas = await html2canvas(element, { scale: 2 });
         const imgData = canvas.toDataURL('image/png');
-        const imgProps = doc.getImageProperties(imgData);
         const pdfWidth = doc.internal.pageSize.getWidth();
+        const imgProps = doc.getImageProperties(imgData);
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
         doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
-        // Save the file locally
-        doc.save('B2R_Reimbursement_Form.pdf');
+        const pdfBlob = doc.output('blob');
+        const reader = new FileReader();
 
-        // Optionally send to email
-        sendEmailWithPDF(doc);
-    });
+        reader.onloadend = function () {
+            const base64PDF = reader.result.split(',')[1];
+            const managerEmail = document.getElementById('managerEmail').value;
+            const employeeEmail = document.getElementById('employeeEmail').value;
+
+            // Send to Google Script
+            fetch('https://script.google.com/macros/s/AKfycbyFnlgfJ71Ujcsmt3QvXt0717Nfv893KCLD1TcVs5WGTiUtuBoJYWvRlNccErb0qUo/exec', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+        data: base64PDF,
+        filename: 'Reimbursement_Form.pdf',
+        to: managerEmail,
+        employee: employeeEmail
+    }),
+})
+.then(response => response.text())
+.then(result => alert("Form submitted successfully.\n" + result))
+.catch(error => alert("Failed to send PDF: " + error.message));
+
+
+            // Also download the PDF locally
+            doc.save('Reimbursement_Form.pdf');
+        };
+
+        reader.readAsDataURL(pdfBlob);
+    } catch (error) {
+        alert("Error generating PDF: " + error.message);
+    }
 }
-function sendEmailWithPDF(pdfDoc) {
-    const pdfBlob = pdfDoc.output('blob');
-
-    const formData = new FormData();
-    formData.append("file", pdfBlob, "B2R_Reimbursement_Form.pdf");
-
-    const managerEmail = document.querySelector("input[placeholder='Manager_Email']")?.value || "dev.test@b2r.in";
-
-    formData.append("manager_email", managerEmail);
-
-    fetch("https://script.google.com/macros/s/AKfycby_7hPtHktFyzAg2TTXZTnJsIHTbGpvI5MWCe56m8iHXrPB_w0gNb6rl0IYCseRvO4OZA/exec", {
-        method: "POST",
-        body: formData
-    }).then(res => res.text())
-      .then(response => {
-        alert("Form submitted and emailed successfully!");
-      })
-      .catch(error => {
-        console.error("Error sending email:", error);
-        alert("Failed to send email.");
-      });
-}
-
-
 </script>
 </body>
 </html>
