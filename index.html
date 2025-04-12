@@ -15,11 +15,19 @@
     <style>body {
         font-family: Arial, sans-serif;
         background-color: #f9f9f9;
+        
         margin: 0;
         padding: 0;
+        animation: fadeIn 1.2s ease-in-out;
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .container {
-        width: 70%;
+        background: linear-gradient(to right, #74ebd5, #9face6);
+        width: 90%;
         margin: 20px auto;
         background-color: #ffffff;
         padding: 20px;
@@ -121,8 +129,9 @@
             <td><input type="text" required></td>
             <th>Emp Name:</th>
             <td><input type="text" required></td>
-            <th>Account No:</th>
-            <td><input type="text" required></td>
+            <th>managerEmail</th>
+            <td><input type="email" id="managerEmail" placeholder="Manager's Email" required /></td>
+          
         </tr>
         <tr>
             <th>Center:</th>
@@ -134,14 +143,12 @@
                     <option>Almora</option>
                     <option>Pithoragarh</option>
                 </select>
+                <th>employeeEmail</th>
+                <td><input type="email" id="employeeEmail" placeholder="Your Email" required /></td>
             </td>
-            <th>IFSC:</th>
-            <td colspan="3"><input type="text" required></td>
         </tr>
-        <th>managerEmail<input type="email" id="managerEmail" placeholder="Manager's Email" required /></th>
         
-        <th>employeeEmail<input type="email" id="employeeEmail" placeholder="Your Email" required /></th>
-      
+    
     </table>
 
     <!-- 🚗 Travel Details -->
@@ -158,7 +165,7 @@
             <th>Action</th>
         </tr>
     </table>
-    <button onclick="addTravelRow()">Add Row</button>
+    <button onclick="addTravelRow()">click here 👉 Add Row 👈</button>
     <h3>Travel Total: ₹<span id="travelTotal">0</span></h3>
 
  <!-- 🍱  Quarterly Reimbursement  Details -->
@@ -171,7 +178,7 @@
          <th>Action</th>
      </tr>
  </table>
- <button onclick="addQuarterlyReimbursementRow ()">Add Row</button>
+ <button onclick="addQuarterlyReimbursementRow ()">click here 👉 Add Row 👈</button>
  <h3>QuarterlyReimbursement Total: ₹<span id="QuarterlyReimbursementTotal">0</span></h3>
 
 
@@ -185,7 +192,7 @@
             <th>Action</th>
         </tr>
     </table>
-    <button onclick="addMealRow()">Add Row</button>
+    <button onclick="addMealRow()">click here 👉 Add Row 👈</button>
     <h3>Meal Total: ₹<span id="mealTotal">0</span></h3>
 
      <!-- 🍱 Mobile  Details -->
@@ -198,7 +205,7 @@
              <th>Action</th>
          </tr>
      </table>
-     <button onclick="addMobileRow()">Add Row</button>
+     <button onclick="addMobileRow()">click here 👉 Add Row 👈</button>
      <h3>Mobile Total: ₹<span id="mobileTotal">0</span></h3>
 
      
@@ -210,42 +217,15 @@
     <div class="signature-section">
         <div>
             Signature of Receiver: 
-            <select required>
-                <option value="">Select Day</option>
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-            </select>
+            <input type="text" required>
         </div>
         <div>
             Reviewed By: 
-            <select required>
-                <option value="">Select Day</option>
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-            </select>
+            <input type="text" required>
         </div>
         <div>
             Authorized By: 
-            <select required>
-                <option value="">Select Day</option>
-                <option>Monday</option>
-                <option>Tuesday</option>
-                <option>Wednesday</option>
-                <option>Thursday</option>
-                <option>Friday</option>
-                <option>Saturday</option>
-                <option>Sunday</option>
-            </select>
+            <input type="text" required>
         </div>
     </div>
    <!-- send mail -->
@@ -427,7 +407,60 @@ function addQuarterlyReimbursementRow () {
 
         return result.trim();
     }
-    async function generatePDFAndSend() {
+//     async function generatePDFAndSend() {
+//     const { jsPDF } = window.jspdf;
+//     const doc = new jsPDF('p', 'pt', 'a4');
+//     const element = document.body;
+
+//     try {
+//         const canvas = await html2canvas(element, { scale: .8 });
+//         const imgData = canvas.toDataURL('image/png');
+//         const pdfWidth = doc.internal.pageSize.getWidth();
+//         const imgProps = doc.getImageProperties(imgData);
+//         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+//         doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+//         const pdfBlob = doc.output('blob');
+//         const reader = new FileReader();
+
+//         reader.onloadend = function () {
+//             const base64PDF = reader.result.split(',')[1];
+//             const managerEmail = document.getElementById('managerEmail').value;
+//             const employeeEmail = document.getElementById('employeeEmail').value;
+
+//             // Send to Google Script
+//             fetch('https://script.google.com/macros/s/AKfycbyFnlgfJ71Ujcsmt3QvXt0717Nfv893KCLD1TcVs5WGTiUtuBoJYWvRlNccErb0qUo/exec', {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     mode: 'no-cors',
+//     body: new URLSearchParams({
+//         data: base64PDF,
+//         filename: 'Reimbursement_Form.pdf',
+//         to: managerEmail,
+//         employee: employeeEmail
+//     }),
+// })
+// .then(response => response.text())
+// .then(result => alert("Form submitted successfully.\n" + result))
+// .catch(error => alert("Failed to send PDF: " + error.message));
+
+
+//             // Also download the PDF locally
+//             doc.save('Reimbursement_Form.pdf');
+//         };
+          
+//         reader.readAsDataURL(pdfBlob);
+//     } catch (error) {
+//         alert("Error generating PDF: " + error.message);
+//     }
+// }
+// document.addEventListener("contextmenu", function (e) {
+//       e.preventDefault();
+//     });
+async function generatePDFAndSend() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
     const element = document.body;
@@ -451,22 +484,26 @@ function addQuarterlyReimbursementRow () {
 
             // Send to Google Script
             fetch('https://script.google.com/macros/s/AKfycbyFnlgfJ71Ujcsmt3QvXt0717Nfv893KCLD1TcVs5WGTiUtuBoJYWvRlNccErb0qUo/exec', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    mode: 'no-cors',
-    body: new URLSearchParams({
-        data: base64PDF,
-        filename: 'Reimbursement_Form.pdf',
-        to: managerEmail,
-        employee: employeeEmail
-    }),
-})
-.then(response => response.text())
-.then(result => alert("Form submitted successfully.\n" + result))
-.catch(error => alert("Failed to send PDF: " + error.message));
-
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                mode: 'no-cors',
+                body: new URLSearchParams({
+                    data: base64PDF,
+                    filename: 'Reimbursement_Form.pdf',
+                    to: managerEmail,
+                    employee: employeeEmail
+                }),
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert("Form submitted successfully.\n" + result);
+                
+                // Redirect after success
+                window.location.href = 'success.html'; // Change 'success_page.html' to your desired URL
+            })
+            .catch(error => alert("Failed to send PDF: " + error.message));
 
             // Also download the PDF locally
             doc.save('Reimbursement_Form.pdf');
@@ -477,9 +514,7 @@ function addQuarterlyReimbursementRow () {
         alert("Error generating PDF: " + error.message);
     }
 }
-document.addEventListener("contextmenu", function (e) {
-      e.preventDefault();
-    });
+
 </script>
 </body>
 </html>
