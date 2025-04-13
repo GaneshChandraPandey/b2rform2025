@@ -346,7 +346,7 @@ function addQuarterlyReimbursementRow () {
                 let mode = row.cells[4].children[0].value.toLowerCase();
                 // let rate = mode === 'bike' ? 4 : 10;
                 // row.cells[6].children[0].value = km * rate;
-                // travelTotal += km * rate;
+                
                 if (mode === 'bike') {
                 row.cells[6].children[0].value = km * 4;
             } else if (mode === 'car') {
@@ -356,6 +356,7 @@ function addQuarterlyReimbursementRow () {
             } else {
             }
             }
+            travelTotal += km * rate;
         });
         document.getElementById("travelTotal").innerText = travelTotal;
 
