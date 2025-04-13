@@ -26,7 +26,7 @@
     }
 
     .container {
-        background: linear-gradient(to right, #b2ede2, #b4beec);
+        background: linear-gradient(to right, #5ce7ce, #6880ee);
         width: 90%;
         margin: 20px auto;
         background-color: #ffffff;
@@ -243,6 +243,20 @@
     }
 
     // 🚗 Add Travel Row
+    // function addTravelRow() {
+    //     const table = document.getElementById('travelTable');
+    //     const row = table.insertRow(-1);
+    //     row.innerHTML = `
+    //         <td><input type="date"></td>
+    //         <td>${getDropdown(offices)}</td>
+    //         <td>${getDropdown(offices)}</td>
+    //         <td><input type="text"></td>
+    //         <td>${getDropdown(['Car', 'Bike', 'Bus'])}</td>
+    //         <td><input type="number" oninput="calculateTotal()"></td>
+    //         <td><input type="number" readonly></td>
+    //         <td><button onclick="deleteRow(this)">Delete</button></td>
+    //     `;
+    // }
     function addTravelRow() {
     const table = document.getElementById('travelTable');
     const row = table.insertRow(-1);
@@ -257,7 +271,6 @@
         <td><button onclick="deleteRow(this)">Delete</button></td>
     `;
 }
-
     function handleModeChange(selectElement) {
     const row = selectElement.closest('tr');
     const amountInput = row.cells[6].children[0];
@@ -269,14 +282,12 @@
         calculateTotal(); // recalculate if mode is changed to car/bike
     }
 }
-
 // 🍱 Add QuarterlyReimbursement Row
 function addQuarterlyReimbursementRow () {
         const table = document.getElementById('QuarterlyReimbursementTable');
         const row = table.insertRow(-1);
         row.innerHTML = `
             <td><input type="date"></td
-                
             <td><input type="date"></td>
             <td><input type="text"></td>
             <td><input type="number" oninput="calculateTotal()"></td>
@@ -345,11 +356,8 @@ function addQuarterlyReimbursementRow () {
                 // Do not calculate, user enters amount manually
             } else {
             }
-
-            travelTotal += parseFloat(row.cells[6].children[0].value) || 0;
-        }
             }
-        )};
+        });
         document.getElementById("travelTotal").innerText = travelTotal;
 
 
@@ -384,7 +392,7 @@ function addQuarterlyReimbursementRow () {
         let grandTotal = travelTotal + mealTotal +  mobileTotal + QuarterlyReimbursementTotal;
         document.getElementById("grandTotal").innerText = grandTotal;
         document.getElementById("amountInWords").innerText = convertToWords(grandTotal);
-    
+    }
 
     function deleteRow(btn) {
         btn.parentElement.parentElement.remove();
@@ -493,7 +501,7 @@ async function generatePDFAndSend() {
     const element = document.body;
 
     try {
-        const canvas = await html2canvas(element, { scale: .7 });
+        const canvas = await html2canvas(element, { scale: .8 });
         const imgData = canvas.toDataURL('image/png');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
