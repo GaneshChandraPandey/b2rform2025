@@ -171,7 +171,8 @@
  <h4>Quarterly Reimbursement Details</h4>
  <table id="QuarterlyReimbursementTable">
      <tr>
-        <th>Period From</th>
+        
+         <th>Period From</th>
          <th>Period To</th>
          <th>Purpose</th>
          <th>Amount</th>
@@ -344,10 +345,8 @@ function addQuarterlyReimbursementRow () {
             if (index > 0) {
                 let km = parseFloat(row.cells[5].children[0].value) || 0;
                 let mode = row.cells[4].children[0].value.toLowerCase();
-                // let rate = mode === 'bike' ? 4 : 10;
-                // row.cells[6].children[0].value = km * rate;
-                // travelTotal += km * rate;
-                if (mode === 'bike') {
+
+      if (mode === 'bike') {
     let amount = km * 4;
     row.cells[6].children[0].value = amount;
     travelTotal += amount;
