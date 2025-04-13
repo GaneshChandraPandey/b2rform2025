@@ -172,7 +172,8 @@
  <h4>Quarterly Reimbursement Details</h4>
  <table id="QuarterlyReimbursementTable">
      <tr>
-         <th>Date</th>
+        <th>Period From</th>
+         <th>Period To</th>
          <th>Purpose</th>
          <th>Amount</th>
          <th>Action</th>
@@ -243,25 +244,39 @@
 
     // 🚗 Add Travel Row
     function addTravelRow() {
-        const table = document.getElementById('travelTable');
-        const row = table.insertRow(-1);
-        row.innerHTML = `
-            <td><input type="date"></td>
-            <td>${getDropdown(offices)}</td>
-            <td>${getDropdown(offices)}</td>
-            <td><input type="text"></td>
-            <td>${getDropdown(['Car', 'Bike', 'Bus'])}</td>
-            <td><input type="number" oninput="calculateTotal()"></td>
-            <td><input type="number" readonly></td>
-            <td><button onclick="deleteRow(this)">Delete</button></td>
-        `;
+    const table = document.getElementById('travelTable');
+    const row = table.insertRow(-1);
+    row.innerHTML = `
+        <td><input type="date"></td>
+        <td>${getDropdown(offices)}</td>
+        <td>${getDropdown(offices)}</td>
+        <td><input type="text"></td>
+        <td>${getDropdown(['Car', 'Bike', 'Bus']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
+        <td><input type="number" oninput="calculateTotal()"></td>
+        <td><input type="number" readonly></td>
+        <td><button onclick="deleteRow(this)">Delete</button></td>
+    `;
+}
+
+    function handleModeChange(selectElement) {
+    const row = selectElement.closest('tr');
+    const amountInput = row.cells[6].children[0];
+
+    if (selectElement.value.toLowerCase() === 'bus') {
+        amountInput.removeAttribute('readonly');
+    } else {
+        amountInput.setAttribute('readonly', true);
+        calculateTotal(); // recalculate if mode is changed to car/bike
     }
+}
+
 // 🍱 Add QuarterlyReimbursement Row
 function addQuarterlyReimbursementRow () {
         const table = document.getElementById('QuarterlyReimbursementTable');
         const row = table.insertRow(-1);
         row.innerHTML = `
-            
+            <td><input type="date"></td
+                
             <td><input type="date"></td>
             <td><input type="text"></td>
             <td><input type="number" oninput="calculateTotal()"></td>
@@ -319,11 +334,22 @@ function addQuarterlyReimbursementRow () {
             if (index > 0) {
                 let km = parseFloat(row.cells[5].children[0].value) || 0;
                 let mode = row.cells[4].children[0].value.toLowerCase();
-                let rate = mode === 'bike' ? 4 : 10;
-                row.cells[6].children[0].value = km * rate;
-                travelTotal += km * rate;
+                // let rate = mode === 'bike' ? 4 : 10;
+                // row.cells[6].children[0].value = km * rate;
+                // travelTotal += km * rate;
+                if (mode === 'bike') {
+                row.cells[6].children[0].value = km * 4;
+            } else if (mode === 'car') {
+                row.cells[6].children[0].value = km * 10;
+            } else if (mode === 'bus') {
+                // Do not calculate, user enters amount manually
+            } else {
             }
-        });
+
+            travelTotal += parseFloat(row.cells[6].children[0].value) || 0;
+        }
+            }
+        )};
         document.getElementById("travelTotal").innerText = travelTotal;
 
 
@@ -358,7 +384,7 @@ function addQuarterlyReimbursementRow () {
         let grandTotal = travelTotal + mealTotal +  mobileTotal + QuarterlyReimbursementTotal;
         document.getElementById("grandTotal").innerText = grandTotal;
         document.getElementById("amountInWords").innerText = convertToWords(grandTotal);
-    }
+    
 
     function deleteRow(btn) {
         btn.parentElement.parentElement.remove();
@@ -467,7 +493,7 @@ async function generatePDFAndSend() {
     const element = document.body;
 
     try {
-        const canvas = await html2canvas(element, { scale: .7});
+        const canvas = await html2canvas(element, { scale: .8 });
         const imgData = canvas.toDataURL('image/png');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
