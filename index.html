@@ -261,6 +261,7 @@ function addQuarterlyReimbursementRow () {
         const table = document.getElementById('QuarterlyReimbursementTable');
         const row = table.insertRow(-1);
         row.innerHTML = `
+            
             <td><input type="date"></td>
             <td><input type="text"></td>
             <td><input type="number" oninput="calculateTotal()"></td>
@@ -466,7 +467,7 @@ async function generatePDFAndSend() {
     const element = document.body;
 
     try {
-        const canvas = await html2canvas(element, { scale: .8 });
+        const canvas = await html2canvas(element, { scale: .7});
         const imgData = canvas.toDataURL('image/png');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
