@@ -501,7 +501,7 @@ async function generatePDFAndSend() {
     const element = document.body;
 
     try {
-        const canvas = await html2canvas(element, { scale: .8 });
+        const canvas = await html2canvas(element, { scale: .6 });
         const imgData = canvas.toDataURL('image/png');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
