@@ -247,7 +247,7 @@
         <td>${getDropdown(offices)}</td>
         <td>${getDropdown(offices)}</td>
         <td><input type="text"></td>
-        <td>${getDropdown(['Car', 'Bike', 'Bus']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
+        <td>${getDropdown(['Car', 'Bike', 'Public Transport']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
         <td><input type="number" oninput="calculateTotal()"></td>
         <td><input type="number" readonly></td>
         <td><button onclick="deleteRow(this)">Delete</button></td>
@@ -257,7 +257,7 @@
     const row = selectElement.closest('tr');
     const amountInput = row.cells[6].children[0];
 
-    if (selectElement.value.toLowerCase() === 'bus') {
+    if (selectElement.value.toLowerCase() === 'Public Transport') {
         amountInput.removeAttribute('readonly');
     } else {
         amountInput.setAttribute('readonly', true);
@@ -336,7 +336,7 @@ function addQuarterlyReimbursementRow () {
     let amount = km * 10;
     row.cells[6].children[0].value = amount;
     travelTotal += amount;
-} else if (mode === 'bus') {
+} else if (mode === 'Public Transport') {
     let amount = parseFloat(row.cells[6].children[0].value) || 0; // User enters manually
     travelTotal += amount;
 }
