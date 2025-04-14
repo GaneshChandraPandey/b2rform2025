@@ -14,7 +14,8 @@
 
     <style>body {
         font-family: Arial, sans-serif;
-        background-color: #f9f9f998;
+        background-color: #f9f9f903;
+
         margin: 0;
         padding: 0;
        
@@ -237,20 +238,7 @@
     }
 
     // 🚗 Add Travel Row
-    // function addTravelRow() {
-    //     const table = document.getElementById('travelTable');
-    //     const row = table.insertRow(-1);
-    //     row.innerHTML = `
-    //         <td><input type="date"></td>
-    //         <td>${getDropdown(offices)}</td>
-    //         <td>${getDropdown(offices)}</td>
-    //         <td><input type="text"></td>
-    //         <td>${getDropdown(['Car', 'Bike', 'Bus'])}</td>
-    //         <td><input type="number" oninput="calculateTotal()"></td>
-    //         <td><input type="number" readonly></td>
-    //         <td><button onclick="deleteRow(this)">Delete</button></td>
-    //     `;
-    // }
+    
     function addTravelRow() {
     const table = document.getElementById('travelTable');
     const row = table.insertRow(-1);
@@ -448,12 +436,12 @@ async function generatePDFAndSend() {
 
     try {
         const canvas = await html2canvas(element, { scale: 1 });
-        const imgData = canvas.toDataURL('image/jpeg');
+        const imgData = canvas.toDataURL('image/png');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
 
         const pdfBlob = doc.output('blob');
         const reader = new FileReader();
