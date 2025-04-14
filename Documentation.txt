@@ -1,0 +1,137 @@
+Pushing a Project to GitHub from VS Code
+
+
+
+Open VS Code and Your Project Folder
+
+Initialize Git
+
+bash
+Copy
+Edit
+git init
+Add All Files
+
+bash
+Copy
+Edit
+git add .
+Commit Changes
+
+bash
+Copy
+Edit
+git commit -m "Initial commit"
+Create a Repository on GitHub
+
+Go to GitHub → Click on New → Fill in repo details → Click Create Repository
+
+Connect Remote Repository
+
+bash
+Copy
+Edit
+git remote add origin https://github.com/your-username/your-repo-name.git
+Push to GitHub
+
+bash
+Copy
+Edit
+git push -u origin main
+
+
+Deploying the Project to Vercel
+
+Prerequisites:
+Vercel account: https://vercel.com/
+
+Your project should have an index.html or be a supported framework (React, Next.js, etc.)
+
+Steps:
+Login to Vercel
+
+Go to https://vercel.com and sign in using GitHub
+
+Import GitHub Project
+
+Click “Add New Project”
+
+Select the GitHub repository you pushed earlier
+
+Configure project settings (e.g., framework, build command if needed)
+
+Deploy
+
+Click Deploy
+
+After a few seconds, your project will be live (you’ll get a Vercel URL like https://your-project.vercel.app)
+
+
+
+Embedding the Deployed Project in Google Sites
+
+Open Google Sites
+
+Go to https://sites.google.com/
+
+Create a New Site
+
+Click on Blank or choose a template
+
+Embed Your Project
+
+Click Embed
+
+Choose “By URL”
+
+Paste your Vercel deployed project link (e.g., https://your-project.vercel.app)
+
+Click Insert
+
+Resize and Publish
+
+Adjust the size of the embed block
+
+Click Publish to make the site live
+
+Adding a Google Apps Script to Send Emails
+
+function doPost(e) {
+  try {
+    const folder = DriveApp.getFolderById('12J9JwHOgtgdSK0FM2FxtE5CmlPqZ3THo');
+    const blob = Utilities.newBlob(
+      Utilities.base64Decode(e.parameter.data),
+      'application/pdf',
+      e.parameter.filename
+    );
+    const file = folder.createFile(blob);
+
+    const managerEmail = e.parameter.to;
+    const employeeEmail = e.parameter.employee;
+
+    const subject = "Reimbursement Form Submitted";
+    const body = "A new reimbursement form has been submitted. Please find the attached PDF.";
+
+    MailApp.sendEmail({
+      to: managerEmail,
+      subject: subject,
+      body: body,
+      attachments: [file]
+    });
+
+    MailApp.sendEmail({
+      to: employeeEmail,
+      subject: "Your Reimbursement Form Submission",
+      body: "Thank you! Your reimbursement form has been submitted successfully. Please find the attached PDF.",
+      attachments: [file]
+    });
+
+    return ContentService.createTextOutput("Emails sent successfully.").setMimeType(ContentService.MimeType.TEXT);
+
+  } catch (error) {
+    return ContentService.createTextOutput("Error: " + error.message).setMimeType(ContentService.MimeType.TEXT);
+  }
+}
+
+
+use this script for email sending and the deploy this and paste the web app url in the project code
