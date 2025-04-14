@@ -247,7 +247,7 @@
         <td>${getDropdown(offices)}</td>
         <td>${getDropdown(offices)}</td>
         <td><input type="text"></td>
-        <td>${getDropdown(['Car', 'Bike', 'Public Transport']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
+        <td>${getDropdown(['Car', 'Bike', 'Bus']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
         <td><input type="number" oninput="calculateTotal()"></td>
         <td><input type="number" readonly></td>
         <td><button onclick="deleteRow(this)">Delete</button></td>
@@ -257,7 +257,7 @@
     const row = selectElement.closest('tr');
     const amountInput = row.cells[6].children[0];
 
-    if (selectElement.value.toLowerCase() === 'Public Transport') {
+    if (selectElement.value.toLowerCase() === 'bus') {
         amountInput.removeAttribute('readonly');
     } else {
         amountInput.setAttribute('readonly', true);
@@ -336,7 +336,7 @@ function addQuarterlyReimbursementRow () {
     let amount = km * 10;
     row.cells[6].children[0].value = amount;
     travelTotal += amount;
-} else if (mode === 'Public Transport') {
+} else if (mode === 'bus') {
     let amount = parseFloat(row.cells[6].children[0].value) || 0; // User enters manually
     travelTotal += amount;
 }
@@ -434,7 +434,54 @@ async function generatePDFAndSend() {
     const doc = new jsPDF('p', 'pt', 'a4');
     const element = document.body;
 
+//     try {
+//         const canvas = await html2canvas(element, { scale: 1 });
+//         const imgData = canvas.toDataURL('image/jpeg');
+//         const pdfWidth = doc.internal.pageSize.getWidth();
+//         const imgProps = doc.getImageProperties(imgData);
+//         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
+//         doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+//         const pdfBlob = doc.output('blob');
+//         const reader = new FileReader();
+
+//         reader.onloadend = function () {
+//             const base64PDF = reader.result.split(',')[1];
+//             const managerEmail = document.getElementById('managerEmail').value;
+//             const employeeEmail = document.getElementById('employeeEmail').value;
+
+//             // Send to Google Script
+//             fetch('https://script.google.com/macros/s/AKfycbyFnlgfJ71Ujcsmt3QvXt0717Nfv893KCLD1TcVs5WGTiUtuBoJYWvRlNccErb0qUo/exec', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded',
+//                 },
+//                 mode: 'no-cors',
+//                 body: new URLSearchParams({
+//                     data: base64PDF,
+//                     filename: 'Reimbursement_Form.pdf',
+//                     to: managerEmail,
+//                     employee: employeeEmail
+//                 }),
+//             })
+//             .then(response => response.text())
+//             .then(result => {
+//                 alert("Form submitted successfully.\n" + result);
+                
+//                 // Redirect after success
+//                 window.location.href = 'success.html'; // Change 'success_page.html' to your desired URL
+//             })
+//             .catch(error => alert("Failed to send PDF: " + error.message));
+
+//             // Also download the PDF locally
+//             doc.save('Reimbursement_Form.pdf');
+//         };
+          
+//         reader.readAsDataURL(pdfBlob);
+//     } catch (error) {
+//         alert("Error generating PDF: " + error.message);
+//     }
 try {
     const canvas = await html2canvas(element, { scale: 1 });
     const imgData = canvas.toDataURL('image/jpeg');
