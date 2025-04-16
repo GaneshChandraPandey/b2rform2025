@@ -75,7 +75,7 @@
     h4 {
         display: flex;
         justify-content: center;
-       
+       margin-bottom: 2px;
     }
     h3{
         display: flex;
@@ -96,26 +96,15 @@
     <table>
         <tr>
             <th>Period From:</th>
-            <td><input type="date" required></td>
+            <td><input type="date" id="periodFrom" required></td>
             <th>Period To:</th>
-            <td><input type="date" required></td>
+            <td><input type="date" id="periodTo" required></td>
+         
             <th>Claim for the Month of:</th>
             <td> 
-            <select required>
-                
-                    <option>January</option>
-                    <option>February</option>
-                    <option>March</option>
-                    <option>April</option>
-                    <option>May</option>
-                    <option>June</option>
-                    <option>July</option>
-                    <option>August</option>
-                    <option>September</option>
-                    <option>October</option>
-                    <option>November</option>
-                    <option>December</option>
-            </select>
+                    <select id="monthDropdown" name="month" required>
+           <!-- Options will be added by JavaScript -->
+         </select>
         </td>
         </tr>
         <tr>
@@ -130,13 +119,16 @@
         <tr>
             <th>Center:</th>
             <td>
-                <select required>
-                    <option>Orakhan</option>
-                    <option>Haldwani</option>
-                    <option>Dehradun</option>
-                    <option>Almora</option>
-                    <option>Pithoragarh</option>
-                </select>
+          
+<input list="officeList" name="from" id="from" placeholder="Enter or select place" required>
+<datalist id="officeList">
+  <option value="Dehradun">
+  <option value="Nainital">
+  <option value="Almora">
+  <option value="Pithoragarh">
+  <option value="Ranikhet">
+  <!-- Add all B2R offices here -->
+</datalist>
                 <th>employeeEmail</th>
                 <td><input type="email" id="employeeEmail" placeholder="Your Email" required /></td>
             </td>
@@ -159,14 +151,13 @@
             <th>Action</th>
         </tr>
     </table>
-    <button onclick="addTravelRow()">click here 👉 Add Row 👈</button>
+    <button onclick="addTravelRow()">👉 Add Row 👈</button>
     <h3>Travel Total: ₹<span id="travelTotal">0</span></h3>
 
  <!-- 🍱  Quarterly Reimbursement  Details -->
  <h4>Quarterly Reimbursement Details</h4>
  <table id="QuarterlyReimbursementTable">
      <tr>
-        
          <th>Period From</th>
          <th>Period To</th>
          <th>Purpose</th>
@@ -227,11 +218,11 @@
    <!-- send mail -->
     <div style="display: flex; justify-content: flex-end;">
      
-    <button  class="btn" onclick="generatePDFAndSend()">Submit</button>
+    <button  class="btn" onclick="downloadPDFAndRedirect()">Submit</button>
 </div>
 </div>
 <script>
-    const offices = ['Orakhan', 'Haldwani', 'Dehradun', 'Rishikesh', 'Nainital'];
+   
 
     function getDropdown(options) {
         return `<select>${options.map(opt => `<option>${opt}</option>`).join('')}</select>`;
@@ -244,8 +235,28 @@
     const row = table.insertRow(-1);
     row.innerHTML = `
         <td><input type="date"></td>
-        <td>${getDropdown(offices)}</td>
-        <td>${getDropdown(offices)}</td>
+<td><input list="officeList" name="from" id="from" placeholder="Enter or select place" required>
+<datalist id="officeList">
+  <option value="Dehradun">
+  <option value="Nainital">
+  <option value="Almora">
+  <option value="Pithoragarh">
+  <option value="Ranikhet">
+  <!-- Add all B2R offices here -->
+</datalist>
+</td>
+
+  <td >     
+<input list="officeList" name="from" id="from" placeholder="Enter or select place" required>
+<datalist id="officeList">
+  <option value="Dehradun">
+  <option value="Nainital">
+  <option value="Almora">
+  <option value="Pithoragarh">
+  <option value="Ranikhet">
+  <!-- Add all B2R offices here -->
+</datalist>
+</td>
         <td><input type="text"></td>
         <td>${getDropdown(['Car', 'Bike', 'Bus']).replace('<select', '<select onchange="handleModeChange(this)"')}</td>
         <td><input type="number" oninput="calculateTotal()"></td>
@@ -299,22 +310,8 @@ function addQuarterlyReimbursementRow () {
         const row = table.insertRow(-1);
         row.innerHTML = `
               <td> 
-            <select required>
-                 <option></option>
-                    <option>January</option>
-                    <option>February</option>
-                    <option>March</option>
-                    <option>April</option>
-                    <option>May</option>
-                    <option>June</option>
-                    <option>July</option>
-                    <option>August</option>
-                    <option>September</option>
-                    <option>October</option>
-                    <option>November</option>
-                    <option>December</option>
-            </select>
-        </td></td>
+           <input type="text">
+</td>
             <td><input type="text"></td>
             <td><input type="number" oninput="calculateTotal()"></td>
             <td><button onclick="deleteRow(this)">Delete</button></td>
@@ -428,127 +425,82 @@ function addQuarterlyReimbursementRow () {
 
         return result.trim();
     }
-
-async function generatePDFAndSend() {
+    async function downloadPDFAndRedirect() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF('p', 'pt', 'a4');
     const element = document.body;
 
     try {
-        const canvas = await html2canvas(element, { scale: 1 });
-        const imgData = canvas.toDataURL('image/png');
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/jpeg');
         const pdfWidth = doc.internal.pageSize.getWidth();
         const imgProps = doc.getImageProperties(imgData);
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
 
-        const pdfBlob = doc.output('blob');
-        const reader = new FileReader();
+        // Save the PDF locally
+        doc.save('Reimbursement_Form.pdf');
 
-        reader.onloadend = function () {
-            const base64PDF = reader.result.split(',')[1];
-            const managerEmail = document.getElementById('managerEmail').value;
-            const employeeEmail = document.getElementById('employeeEmail').value;
+        // Notify user before redirecting
+        alert("Your form PDF has been downloaded. Please upload it in the next form.");
 
-            // Send to Google Script
-            fetch('https://script.google.com/macros/s/AKfycbwwLVp6d5Wj4cKxH_IeEowacF3pDFbuei_e20Ep8qOysSQJr14ToT4m_7fXDN1P_DlMsw/exec', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                mode: 'no-cors',
-                body: new URLSearchParams({
-                    data: base64PDF,
-                    filename: 'Reimbursement_Form.pdf',
-                    to: managerEmail,
-                    employee: employeeEmail
-                }),
-            })
-            .then(response => response.text())
-            .then(result => {
-                alert("Form submitted successfully.\n" + result);
-                
-                // Redirect after success
-                window.location.href = 'success.html'; // Change 'success.html' to your desired URL
-            })
-            .catch(error => alert("Failed to send PDF: " + error.message));
-
-            // Also download the PDF locally
-            doc.save('Reimbursement_Form.pdf');
-        };
-          
-        reader.readAsDataURL(pdfBlob);
+        // Redirect to Google Form
+        setTimeout(() => {
+            window.location.href = "https://docs.google.com/forms/d/e/1FAIpQLSdNwaKkHbMyCBagntveI7BBLnN6g9OvGrqoYscC-9V4rkxZDw/viewform?usp=header";
+        }, 1000);
     } catch (error) {
         alert("Error generating PDF: " + error.message);
     }
 }
-// try {
-//     const canvas = await html2canvas(element, { scale: 1 });
-//     const imgData = canvas.toDataURL('image/jpeg');
-//     const imgProps = doc.getImageProperties(imgData);
-//     const pdfWidth = doc.internal.pageSize.getWidth();
-//     const pageHeight = doc.internal.pageSize.getHeight();
-//     const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-//     let heightLeft = imgHeight;
-//     let position = 0;
 
-//     // Add the image to the first page
-//     doc.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-//     heightLeft -= pageHeight;
+  const monthDropdown = document.getElementById("monthDropdown");
 
-//     // Add more pages if needed
-//     while (heightLeft > 0) {
-//         position -= pageHeight;
-//         doc.addPage();
-//         doc.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-//         heightLeft -= pageHeight;
-//     }
+  const today = new Date();
+  for (let i = 0; i < 2; i++) {
+    let date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+    let month = date.toLocaleString('default', { month: 'long' });
+    let year = date.getFullYear();
+    let option = document.createElement("option");
+    option.value = `${month} ${year}`;
+    option.text = `${month} ${year}`;
+    monthDropdown.appendChild(option);
+  }
+  
+document.addEventListener('DOMContentLoaded', () => {
+  const fromInput = document.getElementById('periodFrom');
+  const toInput = document.getElementById('periodTo');
 
-//     const pdfBlob = doc.output('blob');
-//     const reader = new FileReader();
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // 0-indexed (0 = January)
 
-//     reader.onloadend = function () {
-//         const base64PDF = reader.result.split(',')[1];
-//         const managerEmail = document.getElementById('managerEmail').value;
-//         const employeeEmail = document.getElementById('employeeEmail').value;
+  // Start date = 1st day of two months ago
+  const startDate = new Date(year, month - 2, 1);
 
-//         // Send to Google Script
-//         fetch('https://script.google.com/macros/s/AKfycbwwLVp6d5Wj4cKxH_IeEowacF3pDFbuei_e20Ep8qOysSQJr14ToT4m_7fXDN1P_DlMsw/exec', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/x-www-form-urlencoded',
-//             },
-//             mode: 'no-cors',
-//             body: new URLSearchParams({
-//                 data: base64PDF,
-//                 filename: 'Reimbursement_Form.pdf',
-//                 to: managerEmail,
-//                 employee: employeeEmail
-//             }),
-//         })
-//         .then(response => response.text())
-//         .then(result => {
-//             alert("Form submitted successfully.\n" + result);
-//             window.location.href = 'success.html'; // Redirect
-//         })
-//         .catch(error => alert("Failed to send PDF: " + error.message));
+  // End date = last day of current month
+  const endDate = new Date(year, month + 1, 0); // day 0 of next month gives last day of current month
 
-//         // Also download the PDF locally
-//         doc.save('Reimbursement_Form.pdf');
-//     };
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  };
 
-//     reader.readAsDataURL(pdfBlob);
-// } catch (error) {
-//     alert("Error generating PDF: " + error.message);
-// }
+  const minDate = formatDate(startDate);
+  const maxDate = formatDate(endDate);
 
-// }
+  fromInput.min = minDate;
+  fromInput.max = maxDate;
 
-// document.addEventListener('contextmenu', function (e) {
-//         e.preventDefault();
-//     });
+  toInput.min = minDate;
+  toInput.max = maxDate;
+});
+
+
+
+document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
 </script>
 </body>
 </html>
