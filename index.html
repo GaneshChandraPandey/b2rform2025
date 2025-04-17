@@ -151,7 +151,41 @@
             <th>Action</th>
         </tr>
     </table>
-    <button onclick="addTravelRow()">👉 Add Row 👈</button><h5>please enter amount first and then enter km in case of Bus</h5>
+    <button onclick="addTravelRow()">👉 Add Row 👈</button>
+    <!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Blinking with JavaScript
+    </title>
+    <style>
+        #blink {
+            font-size: 20px;
+            font-weight: bold;
+            font-family: sans-serif;
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="blink">
+        please enter amount first and then enter km in case of Bus
+    </p>
+    <script type="text/javascript">
+        let blink =
+            document.getElementById('blink');
+
+        setInterval(function () {
+            blink.style.opacity =
+                (blink.style.opacity == 0 ? 1 : 0);
+        }, 500); 
+    </script>
+</body>
+
+</html>
+
     <h3>Travel Total: ₹<span id="travelTotal">0</span></h3>
 
  <!-- 🍱  Quarterly Reimbursement  Details -->
